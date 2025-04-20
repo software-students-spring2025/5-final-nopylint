@@ -1,6 +1,4 @@
 {
   "temp": 26.5,
-  "suggestion": "It's warm today. Stay hydrated!",
-  "temperatures": [24.1, 25.0, 25.5, 26.0, 26.5],
-  "timestamps": ["10:00", "11:00", "12:00", "13:00", "14:00"]
+  "suggestion": "It's warm today. Stay hydrated!"
 }
