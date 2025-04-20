@@ -53,11 +53,8 @@
         <div class="suggestion" id="user-suggestion">
             Please wait...
         </div>
-        <canvas id="chart" width="100%" height="300"></canvas>
     </div>
 
-    <!-- JS (Optional: fetch + render chart) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         async function fetchData() {
             try {
@@ -66,21 +63,6 @@
 
                 document.getElementById('temp-display').innerText = `Current Temperature: ${data.temp}°C`;
                 document.getElementById('user-suggestion').innerText = data.suggestion;
-
-                const ctx = document.getElementById('chart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: data.timestamps,
-                        datasets: [{
-                            label: 'Temperature (°C)',
-                            data: data.temperatures,
-                            fill: false,
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            tension: 0.1
-                        }]
-                    }
-                });
             } catch (err) {
                 document.getElementById('temp-display').innerText = 'Error loading data';
             }
