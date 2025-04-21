@@ -1,0 +1,3 @@
+python-dotenv
+pymongo
+Adafruit_DHT; sys_platform == "linux"
