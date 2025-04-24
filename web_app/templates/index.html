@@ -50,9 +50,41 @@
             text-align: center;
             padding: 0.5rem;
             border-top: 1px solid #ddd;
+            margin-bottom: 1rem;
         }
-        canvas {
-            margin-top: 2rem;
+        .actions {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .actions button {
+            margin: 0 0.5rem;
+            padding: 0.75rem 1.25rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        #view-history {
+            background: #007bff;
+            color: #fff;
+        }
+        #view-history:disabled {
+            background: #a1c6ea;
+            cursor: not-allowed;
+        }
+        #save-this {
+            background: #28a745;
+            color: #fff;
+        }
+        #save-this:disabled {
+            background: #94d3a2;
+            cursor: not-allowed;
+        }
+        #action-result {
+            font-size: 0.9rem;
+            color: #555;
+            text-align: center;
+            min-height: 1.5em;
         }
     </style>
 </head>
@@ -73,26 +105,26 @@
         <div class="suggestion" id="user-suggestion">
             Please wait...
         </div>
-        <!-- Added buttons -->
-        <div class="actions" style="margin-top:1rem; text-align:center;">
+
+        <!-- Action buttons -->
+        <div class="actions">
             <button id="view-history">View History</button>
             <button id="save-this">Save This</button>
         </div>
+        <div id="action-result"></div>
     </div>
 
     <script>
+        // Fetch and display weather + humidity
         async function fetchData() {
             try {
-                const response = await fetch('/api/weather'); // Your Flask endpoint
+                const response = await fetch('/api/weather');
                 const data = await response.json();
-
-                // now also displaying humidity
                 document.getElementById('env-temp').innerHTML = 
                     `Environment: ${data.envTemp}°C<br>Humidity: ${data.envHumidity}%`;
                 document.getElementById('regional-temp').innerHTML = 
                     `Regional: ${data.regionalTemp}°C<br>Humidity: ${data.regionalHumidity}%`;
-                document.getElementById('user-suggestion').innerText = 
-                    data.suggestion;
+                document.getElementById('user-suggestion').innerText = data.suggestion;
             } catch (err) {
                 document.getElementById('env-temp').innerText = 'Error loading data';
                 document.getElementById('regional-temp').innerText = '';
@@ -100,7 +132,53 @@
             }
         }
 
-        fetchData();
+        // Save this: collect Pi data and insert to DB
+        async function saveThisData() {
+            const btn = document.getElementById('save-this');
+            const resultDiv = document.getElementById('action-result');
+            btn.disabled = true;
+            resultDiv.innerText = 'Saving data...';
+
+            try {
+                const res = await fetch('/api/collect', { method: 'POST' });
+                const json = await res.json();
+                if (res.ok) {
+                    resultDiv.innerText = `✅ Record saved`;
+                } else {
+                    resultDiv.innerText = `❌ Save failed: ${json.error || res.statusText}`;
+                }
+            } catch (err) {
+                resultDiv.innerText = `❌ Request error: ${err.message}`;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // View history: open all saved records in new tab
+        async function viewHistory() {
+            const btn = document.getElementById('view-history');
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/metrics');
+                const docs = await res.json();
+                const w = window.open();
+                w.document.write('<pre>' + JSON.stringify(docs, null, 2) + '</pre>');
+            } catch (err) {
+                document.getElementById('action-result').innerText =
+                    `❌ Load history failed: ${err.message}`;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+            document.getElementById('save-this')
+                .addEventListener('click', saveThisData);
+            document.getElementById('view-history')
+                .addEventListener('click', viewHistory);
+        });
     </script>
 </body>
 </html>
