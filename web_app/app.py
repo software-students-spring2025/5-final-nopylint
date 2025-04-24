@@ -18,6 +18,7 @@ from database.db import insert_metric, get_latest, query_metrics
 # 2) 导入采集逻辑
 from raspberry_pi.agent import get_system_metrics  
 
+
 def create_app():
     app = Flask(
         __name__,
@@ -28,11 +29,31 @@ def create_app():
     @app.route('/')
     def index():
         return render_template('index.html')
-    
+
+    @app.route('/api/weather')
+    def weather_api():
+        json_path = os.path.join(
+            os.path.dirname(__file__),
+            'api',              # <project-root>/web_app/api/weather.json
+            'weather.json'
+        )
+        with open(json_path) as f:
+            return jsonify(json.load(f))
+
     @app.route('/history')
     def history():
         return render_template('history.html')
-
+    
+    @app.route('/api/history')
+    def history_api():
+        json_path = os.path.join(
+            os.path.dirname(__file__),
+            'api',              # <project-root>/web_app/api/history.json
+            'history.json'
+        )
+        with open(json_path) as f:
+            return jsonify(json.load(f))
+          
     @app.route('/api/weather')
     def weather_api():
         print("Calling get_current_weather_ny()...")  # Debug
@@ -90,10 +111,9 @@ def create_app():
         d['inserted_id'] = str(d.pop('_id'))
         d['timestamp']   = d['timestamp'].isoformat() + 'Z'
         return jsonify(d)
-
     return app
-
 
 if __name__ == '__main__':
     app = create_app()
     app.run(host='0.0.0.0', port=4000, debug=True)
+
