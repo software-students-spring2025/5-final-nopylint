@@ -73,7 +73,6 @@
   <header>
     <h1>History Dashboard</h1>
   </header>
-
   <div class="container">
     <div class="temps">
       <div class="temperature" id="env-temp">
@@ -93,7 +92,6 @@
       <button id="save-this">Save This</button>
     </div>
   </div>
-
   <script>
     async function fetchData() {
       try {
@@ -118,5 +116,71 @@
     document.getElementById('view-history')
       .addEventListener('click', () => location.href = '/history');
   </script>
+    <script>
+        // Fetch and display weather + humidity
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/weather');
+                const data = await response.json();
+                document.getElementById('env-temp').innerHTML = 
+                    `Environment: ${data.envTteemp}°C<br>Humidity: ${data.envHumidity}%`;
+                document.getElementById('regional-temp').innerHTML = 
+                    `Regional: ${data.temperature}°C<br>Humidity: ${data.humidity}%`;
+                document.getElementById('user-suggestion').innerText = data.suggestion;
+            } catch (err) {
+                document.getElementById('env-temp').innerText = 'Error loading data';
+                document.getElementById('regional-temp').innerText = '';
+                document.getElementById('user-suggestion').innerText = '';
+            }
+        }
+
+        // Save this: collect Pi data and insert to DB
+        async function saveThisData() {
+            const btn = document.getElementById('save-this');
+            const resultDiv = document.getElementById('action-result');
+            btn.disabled = true;
+            resultDiv.innerText = 'Saving data...';
+
+            try {
+                const res = await fetch('/api/collect', { method: 'POST' });
+                const json = await res.json();
+                if (res.ok) {
+                    resultDiv.innerText = `✅ Record saved`;
+                } else {
+                    resultDiv.innerText = `❌ Save failed: ${json.error || res.statusText}`;
+                }
+            } catch (err) {
+                resultDiv.innerText = `❌ Request error: ${err.message}`;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // View history: open all saved records in new tab
+        async function viewHistory() {
+            const btn = document.getElementById('view-history');
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/metrics');
+                const docs = await res.json();
+                const w = window.open();
+                w.document.write('<pre>' + JSON.stringify(docs, null, 2) + '</pre>');
+            } catch (err) {
+                document.getElementById('action-result').innerText =
+                    `❌ Load history failed: ${err.message}`;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+            document.getElementById('save-this')
+                .addEventListener('click', saveThisData);
+            document.getElementById('view-history')
+                .addEventListener('click', viewHistory);
+        });
+    </script>
 </body>
 </html>

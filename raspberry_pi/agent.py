@@ -9,7 +9,7 @@ load_dotenv("x.env")
 
 USE_MOCK = os.getenv("USE_MOCK_SENSOR", "true").lower() == "true"
 if USE_MOCK:
-    from mock_sensor import read as read_sensor
+    from raspberry_pi.mock_sensor import read as read_sensor
 else:
     import Adafruit_DHT
     def read_sensor():
@@ -21,6 +21,17 @@ DEVICE_ID     = os.getenv("DEVICE_ID", str(uuid.uuid4()))
 
 from database.db import insert_metric
 
+def get_system_metrics():
+    """
+    Read one sample from the sensor (mock or real),
+    build a payload dict, and return it.
+    """
+    data = read_sensor()
+    return {
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "device_id": DEVICE_ID,
+        **data
+    }
 
 def main():
     while True:
