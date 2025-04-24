@@ -16,7 +16,7 @@ from flask import Flask, render_template, jsonify, request
 from database.db import insert_metric, get_latest, query_metrics
 
 # 2) 导入采集逻辑
-# from raspberry_pi.agent import get_system_metrics  
+from raspberry_pi.agent import get_system_metrics  
 
 def create_app():
     app = Flask(
@@ -59,14 +59,14 @@ def create_app():
             }), 500
 
     # 单次采集并入库
-    # @app.route('/api/collect', methods=['POST'])
-    # def collect_api():
-    #     payload = get_system_metrics()
-    #     try:
-    #         new_id = insert_metric(payload)
-    #         return jsonify({'inserted_id': new_id}), 201
-    #     except Exception as e:
-    #         return jsonify({'error': str(e)}), 500
+    @app.route('/api/collect', methods=['POST'])
+    def collect_api():
+        payload = get_system_metrics()
+        try:
+            new_id = insert_metric(payload)
+            return jsonify({'inserted_id': new_id}), 201
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
 
     # 查看所有历史记录
     @app.route('/api/metrics', methods=['GET'])
