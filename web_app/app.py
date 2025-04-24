@@ -28,6 +28,10 @@ def create_app():
     @app.route('/')
     def index():
         return render_template('index.html')
+    
+    @app.route('/history')
+    def history():
+        return render_template('history.html')
 
     @app.route('/api/weather')
     def weather_api():
