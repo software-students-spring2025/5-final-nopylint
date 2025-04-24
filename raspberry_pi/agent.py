@@ -21,6 +21,17 @@ DEVICE_ID     = os.getenv("DEVICE_ID", str(uuid.uuid4()))
 
 from database.db import insert_metric
 
+def get_system_metrics():
+    """
+    Read one sample from the sensor (mock or real),
+    build a payload dict, and return it.
+    """
+    data = read_sensor()
+    return {
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "device_id": DEVICE_ID,
+        **data
+    }
 
 def main():
     while True:
