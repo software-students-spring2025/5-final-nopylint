@@ -27,14 +27,29 @@
             background: white;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        .temps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            gap: 4px;
         }
         .temperature {
-            font-size: 2rem;
-            margin-bottom: 1rem;
+            font-size: 16pt;
+            flex: 0 0 45%;
+            text-align: center;
+            padding: 1rem;
+            background: #e8f1fb;
+            border-radius: 8px;
         }
         .suggestion {
             font-size: 1.2rem;
             color: #4a90e2;
+            text-align: center;
+            padding: 0.5rem;
+            border-top: 1px solid #ddd;
         }
         canvas {
             margin-top: 2rem;
@@ -47,11 +62,21 @@
     </header>
 
     <div class="container">
-        <div class="temperature" id="temp-display">
-            Loading temperature...
+        <div class="temps">
+            <div class="temperature" id="env-temp">
+                Loading environment temp...
+            </div>
+            <div class="temperature" id="regional-temp">
+                Loading regional temp...
+            </div>
         </div>
         <div class="suggestion" id="user-suggestion">
             Please wait...
+        </div>
+        <!-- Added buttons -->
+        <div class="actions" style="margin-top:1rem; text-align:center;">
+            <button id="view-history">View History</button>
+            <button id="save-this">Save This</button>
         </div>
     </div>
 
@@ -61,10 +86,16 @@
                 const response = await fetch('/api/weather'); // Your Flask endpoint
                 const data = await response.json();
 
-                document.getElementById('temp-display').innerText = `Current Temperature: ${data.temp}°C`;
-                document.getElementById('user-suggestion').innerText = data.suggestion;
+                document.getElementById('env-temp').innerText = 
+                    `Environment: ${data.envTemp}°C`;
+                document.getElementById('regional-temp').innerText = 
+                    `Regional: ${data.regionalTemp}°C`;
+                document.getElementById('user-suggestion').innerText = 
+                    data.suggestion;
             } catch (err) {
-                document.getElementById('temp-display').innerText = 'Error loading data';
+                document.getElementById('env-temp').innerText = 'Error loading data';
+                document.getElementById('regional-temp').innerText = '';
+                document.getElementById('user-suggestion').innerText = '';
             }
         }
 
@@ -72,3 +103,4 @@
     </script>
 </body>
 </html>
+
