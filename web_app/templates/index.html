@@ -121,9 +121,9 @@
                 const response = await fetch('/api/weather');
                 const data = await response.json();
                 document.getElementById('env-temp').innerHTML = 
-                    `Environment: ${data.envTemp}°C<br>Humidity: ${data.envHumidity}%`;
+                    `Environment: ${data.envTteemp}°C<br>Humidity: ${data.envHumidity}%`;
                 document.getElementById('regional-temp').innerHTML = 
-                    `Regional: ${data.regionalTemp}°C<br>Humidity: ${data.regionalHumidity}%`;
+                    `Regional: ${data.temperature}°C<br>Humidity: ${data.humidity}%`;
                 document.getElementById('user-suggestion').innerText = data.suggestion;
             } catch (err) {
                 document.getElementById('env-temp').innerText = 'Error loading data';
