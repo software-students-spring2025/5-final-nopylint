@@ -9,7 +9,7 @@ load_dotenv("x.env")
 
 USE_MOCK = os.getenv("USE_MOCK_SENSOR", "true").lower() == "true"
 if USE_MOCK:
-    from mock_sensor import read as read_sensor
+    from raspberry_pi.mock_sensor import read as read_sensor
 else:
     import Adafruit_DHT
     def read_sensor():
