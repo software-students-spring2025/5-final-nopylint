@@ -1,21 +1,20 @@
-import sys, os
+import sys
+import os
 
-from api.weather import get_current_weather_ny
+# 0) Make sure your project root is on the path before importing local modules
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, ROOT)
 
-# 把项目根目录加入 Python 搜索路径，以便找到 raspberry_pi 和 database 包
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-# 在任何模块导入前先加载环境变量
+# 1) Load .env before anything else
 from dotenv import load_dotenv
-load_dotenv(os.path.join(os.path.dirname(__file__), '..', 'x.env'))
+load_dotenv(os.path.join(ROOT, 'x.env'))
 
 import json
 from flask import Flask, render_template, jsonify, request
 
-# 1) 导入数据库操作
+# 2) Now import your own modules
+from api.weather import get_current_weather_ny
 from database.db import insert_metric, get_latest, query_metrics
-
-# 2) 导入采集逻辑
 from raspberry_pi.agent import get_system_metrics  
 
 
@@ -30,40 +29,15 @@ def create_app():
     def index():
         return render_template('index.html')
 
-    @app.route('/api/weather')
-    def weather_api():
-        json_path = os.path.join(
-            os.path.dirname(__file__),
-            'api',              # <project-root>/web_app/api/weather.json
-            'weather.json'
-        )
-        with open(json_path) as f:
-            return jsonify(json.load(f))
-
-    @app.route('/history')
-    def history():
-        return render_template('history.html')
-    
-    @app.route('/api/history')
-    def history_api():
-        json_path = os.path.join(
-            os.path.dirname(__file__),
-            'api',              # <project-root>/web_app/api/history.json
-            'history.json'
-        )
-        with open(json_path) as f:
-            return jsonify(json.load(f))
-          
-    @app.route('/api/weather')
+    # ----- DYNAMIC WEATHER ENDPOINT -----
+    @app.route('/api/weather', methods=['GET'])
     def weather_api():
         print("Calling get_current_weather_ny()...")  # Debug
-
         try:
             temp, humidity = get_current_weather_ny()
             print(f"Raw values: temp={temp}, humidity={humidity}")  # Debug
 
             if temp is None or humidity is None:
-                print("Weather data is None – possibly not available for this hour.")  # Debug
                 return jsonify({
                     "success": False,
                     "error": "Weather data not available at this time."
@@ -72,7 +46,7 @@ def create_app():
             return jsonify({
                 "success": True,
                 "temperature": f"{temp:.2f}",
-                "humidity": f"{humidity:.2f}"
+                "humidity":    f"{humidity:.2f}"
             })
 
         except Exception as e:
@@ -83,7 +57,23 @@ def create_app():
                 "details": str(e)
             }), 500
 
-    # 单次采集并入库
+    # ----- HISTORY PAGE & API -----
+    @app.route('/history')
+    def history_page():
+        return render_template('history.html')
+
+    @app.route('/api/history', methods=['GET'])
+    def history_api():
+        json_path = os.path.join(
+            os.path.dirname(__file__),
+            'api',
+            'history.json'
+        )
+        with open(json_path, 'r') as f:
+            data = json.load(f)
+        return jsonify(data)
+
+    # ----- METRICS COLLECTION & QUERY -----
     @app.route('/api/collect', methods=['POST'])
     def collect_api():
         payload = get_system_metrics()
@@ -93,7 +83,6 @@ def create_app():
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 
-    # 查看所有历史记录
     @app.route('/api/metrics', methods=['GET'])
     def metrics_api():
         docs = query_metrics()
@@ -102,7 +91,6 @@ def create_app():
             d['timestamp']   = d['timestamp'].isoformat() + 'Z'
         return jsonify(docs)
 
-    # 查看最新一条记录
     @app.route('/api/metrics/latest', methods=['GET'])
     def latest_api():
         d = get_latest()
@@ -111,7 +99,9 @@ def create_app():
         d['inserted_id'] = str(d.pop('_id'))
         d['timestamp']   = d['timestamp'].isoformat() + 'Z'
         return jsonify(d)
+
     return app
+
 
 if __name__ == '__main__':
     app = create_app()
