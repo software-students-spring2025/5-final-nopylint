@@ -138,10 +138,10 @@
           const data = await response.json();
           document.getElementById(
             "env-temp"
-          ).innerHTML = `Temperature: ${data.envTemp}°C<br>Humidity: ${data.envHumidity}%`;
+          ).innerHTML = `Temperature: ${data.env_temp}°C<br>Humidity: ${data.env_humidity}%`;
           document.getElementById(
             "regional-temp"
-          ).innerHTML = `Temperature: ${data.temperature}°C<br>Humidity: ${data.humidity}%`;
+          ).innerHTML = `Temperature: ${data.api_temp}°C<br>Humidity: ${data.api_humidity}%`;
           document.getElementById("user-suggestion").innerText =
             data.suggestion;
         } catch (err) {
