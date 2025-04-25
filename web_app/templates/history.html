@@ -8,23 +8,31 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    /* same gradient background & centering */
     body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
       font-family: 'Inter', sans-serif;
       margin: 0; padding: 0;
-      background: #f2f4f8; color: #333;
+      background: linear-gradient(270deg, #b5fffc, #ffdee9);
+      color: #2C3E50;
     }
-    header {
-      background: #4a90e2; color: white;
-      padding: 1rem 2rem; text-align: center;
-    }
+
+    /* glassmorphic container */
     .container {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 1rem 2rem 3rem; /* extra bottom padding */
-      background: white;
+      width: 800px;
+      margin: 1.5rem auto;
+      padding: 1rem 2rem 3rem;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+
     .chart-controls {
       text-align: center;
       margin-bottom: 1rem;
@@ -35,24 +43,27 @@
       margin: 0 0.5rem;
       border: none;
       border-radius: 5px;
-      background: #4a90e2;
-      color: white;
+      background: #4DC7C3;      /* lighter teal */
+      color: #ffffff;
       cursor: pointer;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
     }
     .chart-controls button.active {
-      background: #357ABD;
+      background: #3AAEA6;     /* darker on active */
     }
+
     canvas {
       width: 100% !important;
       height: 400px !important;
+      background: rgba(255,255,255,0.3);
+      border-radius: 8px;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Smart Weather Dashboard</h1>
-  </header>
-
   <div class="container">
     <div class="chart-controls">
       <button id="btn-temp" class="active">Temperature</button>
@@ -62,97 +73,65 @@
   </div>
 
   <script>
-    let chart,
-        labels,
-        envTemp, regTemp,
-        envHum,  regHum;
-
+    let chart, labels, envTemp, regTemp, envHum, regHum;
     async function fetchHistory() {
       try {
-        const resp = await fetch('/api/history');
-        const json = await resp.json();
-        console.log('history:', json);
-        labels = json.labels;
-        envTemp = json.envTempValues;
-        regTemp = json.regionalTempValues;
-        envHum  = json.envHumidityValues;
-        regHum  = json.regionalHumidityValues;
+        const { labels: L, envTempValues: eT, regionalTempValues: rT, envHumidityValues: eH, regionalHumidityValues: rH } =
+                await (await fetch('/api/history')).json();
+        labels = L; envTemp = eT; regTemp = rT; envHum = eH; regHum = rH;
         drawChart('temp');
-      } catch (e) {
-        console.error('Failed to load history:', e);
-      }
+      } catch (e) { console.error(e); }
     }
 
     function drawChart(type) {
       const ctx = document.getElementById('history-chart').getContext('2d');
       const isTemp = type === 'temp';
-      const unit   = isTemp ? '°C' : '%';
-
-      // Build two datasets: environment & regional
+      const unit = isTemp ? '°C' : '%';
       const datasets = [
         {
           label: isTemp ? 'Env Temp (°C)' : 'Env Humidity (%)',
-          data:  isTemp ? envTemp : envHum,
-          borderColor: '#4a90e2',
-          pointBackgroundColor: '#4a90e2',
-          pointRadius: 4,
-          fill: false,
-          tension: 0.1
+          data: isTemp ? envTemp : envHum,
+          borderColor: '#4DC7C3',
+          pointBackgroundColor: '#4DC7C3',
+          pointRadius: 4, fill: false, tension: 0.1
         },
         {
           label: isTemp ? 'Regional Temp (°C)' : 'Regional Humidity (%)',
-          data:  isTemp ? regTemp : regHum,
-          borderColor: '#e67e22',
-          pointBackgroundColor: '#e67e22',
-          pointRadius: 4,
-          fill: false,
-          tension: 0.1
+          data: isTemp ? regTemp : regHum,
+          borderColor: '#FF6B6B',
+          pointBackgroundColor: '#FF6B6B',
+          pointRadius: 4, fill: false, tension: 0.1
         }
       ];
-
-      const commonOpts = {
-        responsive: true,
-        maintainAspectRatio: false,
+      const opts = {
+        responsive: true, maintainAspectRatio: false,
         scales: {
-          x: {
-            display: true,
-            title: { display: true, text: 'Time' },
-            ticks: { maxRotation: 45, autoSkip: true }
-          },
-          y: {
-            display: true,
-            title: { display: true, text: unit }
-          }
+          x: { display: true, title: { display: true, text: 'Time' }, ticks: { maxRotation:45, autoSkip:true } },
+          y: { display: true, title: { display: true, text: unit } }
         }
       };
-
       if (chart) {
         chart.data.datasets = datasets;
-        chart.options = commonOpts;
+        chart.options = opts;
         chart.update();
       } else {
-        chart = new Chart(ctx, {
-          type: 'line',
-          data: { labels, datasets },
-          options: commonOpts
-        });
+        chart = new Chart(ctx, { type: 'line', data: { labels, datasets }, options: opts });
       }
     }
 
-    document.getElementById('btn-temp')
-      .addEventListener('click', () => {
-        drawChart('temp');
-        btnTemp.classList.add('active');
-        btnHumid.classList.remove('active');
-      });
-    document.getElementById('btn-humid')
-      .addEventListener('click', () => {
-        drawChart('humid');
-        btnHumid.classList.add('active');
-        btnTemp.classList.remove('active');
-      });
+    document.getElementById('btn-temp').addEventListener('click', () => {
+      drawChart('temp');
+      btnTemp.classList.add('active');
+      btnHumid.classList.remove('active');
+    });
+    document.getElementById('btn-humid').addEventListener('click', () => {
+      drawChart('humid');
+      btnHumid.classList.add('active');
+      btnTemp.classList.remove('active');
+    });
 
     fetchHistory();
   </script>
 </body>
 </html>
+
