@@ -51,10 +51,7 @@ def get_current_weather_ny():
 
 def main():
     temp, humidity = get_current_weather_ny()
-    if temp is None or humidity is None:
-        print("No data available for the current time.")
-    else:
-        print(f"Current (New York) - Temperature: {temp}°C, Humidity: {humidity}%")
+    print(f"Current (New York) - Temperature: {temp}°C, Humidity: {humidity}%")
 
 if __name__ == "__main__":
     main()
