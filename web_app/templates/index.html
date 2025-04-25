@@ -1,186 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Smart Weather Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Google Fonts + Simple Styling -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
-    rel="stylesheet"
-  >
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0; padding: 0;
-      background: #f2f4f8;
-      color: #333;
-    }
-    header {
-      background: #4a90e2; color: white;
-      padding: 1rem 2rem; text-align: center;
-    }
-    .container {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 1rem;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      display: flex; flex-direction: column;
-    }
-    .temps {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-      gap: 4px;
-    }
-    .temperature {
-      font-size: 16pt;
-      flex: 0 0 45%;
-      text-align: center;
-      padding: 1rem;
-      background: #e8f1fb;
-      border-radius: 8px;
-    }
-    .suggestion {
-      font-size: 1.2rem;
-      color: #4a90e2;
-      text-align: center;
-      padding: 0.5rem;
-      border-top: 1px solid #ddd;
-    }
-    .actions {
-      margin-top: 1rem;
-      text-align: center;
-    }
-    .actions button {
-      font-size: 1rem;
-      padding: 0.5rem 1rem;
-      margin: 0 0.5rem;
-      border: none;
-      border-radius: 5px;
-      background: #4a90e2;
-      color: white;
-      cursor: pointer;
-    }
-    .actions button:hover {
-      background: #357ABD;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>History Dashboard</h1>
-  </header>
-  <div class="container">
-    <div class="temps">
-      <div class="temperature" id="env-temp">
-        Loading environment temp...
+  <head>
+    <meta charset="UTF-8" />
+    <title>Smart Weather Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Google Fonts + Simple Styling -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+        body {
+          display: flex;
+          align-items: center; 
+          justify-content: center; 
+          min-height: 100vh;
+          font-family: "Inter", sans-serif;
+          margin: 0;
+          padding: 0;
+          background: linear-gradient(270deg, #b5fffc, #ffdee9);
+          color: #2C3E50;
+        }
+  
+        .container {
+          width: 800px;
+          margin: 1.5rem auto;
+          padding: 1rem;
+          background: rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border-radius: 10px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          display: flex;
+          flex-direction: column;
+        }
+  
+        .temps {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 1.5rem;
+          gap: 4px;
+        }
+  
+        .temperature {
+          flex: 0 0 45%;
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 8px;
+          padding: 1rem;
+          text-align: center;
+          backdrop-filter: blur(5px);
+          -webkit-backdrop-filter: blur(5px);
+        }
+  
+        .temp-header {
+          margin: 0 0 0.5rem;
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: #4DC7C3;
+        }
+  
+        .temp-value,
+        .hum-value {
+          margin: 0.25rem 0;
+          font-size: 14pt;
+          font-weight: 600;
+        }
+  
+        .suggestion {
+          font-size: 12pt;
+          /* font-weight: 600; */
+          color: #ff6b6b;
+          text-align: center;
+          padding: 0.5rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.4);
+        }
+  
+        .actions {
+          margin-top: 1rem;
+          text-align: center;
+        }
+  
+        .actions button {
+          font-size: 1rem;
+          padding: 0.5rem 1rem;
+          margin: 0 0.5rem;
+          border: none;
+          border-radius: 5px;
+          background: #4dc7c3;
+          color: #ffffff;
+          cursor: pointer;
+          backdrop-filter: blur(5px);
+          -webkit-backdrop-filter: blur(5px);
+          font-weight: 600;
+        }
+  
+        .actions button:hover {
+          background: #3aaea6;
+          font-weight: 600;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="temps">
+          <div class="temperature">
+            <div class="temp-header">Environment</div>
+            <div class="temp-value" id="env-temp">-</div>
+            <!-- <div class="hum-value" id="env-humidity">-</div> -->
+          </div>
+          <div class="temperature">
+            <div class="temp-header">Regional</div>
+            <div class="temp-value" id="regional-temp">-</div>
+            <!-- <div class="hum-value" id="regional-humidity">-</div> -->
+          </div>
+        </div>
+  
+        <div class="suggestion" id="user-suggestion">Please wait…</div>
+  
+        <div class="actions">
+          <button id="view-history">View History</button>
+          <button id="save-this">Save This</button>
+        </div>
       </div>
-      <div class="temperature" id="regional-temp">
-        Loading regional temp...
-      </div>
-    </div>
-    <div class="suggestion" id="user-suggestion">
-      Please wait...
-    </div>
-
-    <!-- match button styles to your history page -->
-    <div class="actions">
-      <button id="view-history">View History</button>
-      <button id="save-this">Save This</button>
-    </div>
-  </div>
-  <script>
-    async function fetchData() {
-      try {
-        const response = await fetch('/api/weather');
-        const data = await response.json();
-
-        document.getElementById('env-temp').innerHTML =
-          `Environment: ${data.envTemp}°C<br>Humidity: ${data.envHumidity}%`;
-        document.getElementById('regional-temp').innerHTML =
-          `Regional: ${data.regionalTemp}°C<br>Humidity: ${data.regionalHumidity}%`;
-        document.getElementById('user-suggestion').innerText =
-          data.suggestion;
-      } catch (err) {
-        document.getElementById('env-temp').innerText = 'Error loading data';
-        document.getElementById('regional-temp').innerText = '';
-        document.getElementById('user-suggestion').innerText = '';
-      }
-    }
-    fetchData();
-
-    // navigate to /history when clicked
-    document.getElementById('view-history')
-      .addEventListener('click', () => location.href = '/history');
-  </script>
     <script>
-        // Fetch and display weather + humidity
-        async function fetchData() {
-            try {
-                const response = await fetch('/api/weather');
-                const data = await response.json();
-                document.getElementById('env-temp').innerHTML = 
-                    `Environment: ${data.envTteemp}°C<br>Humidity: ${data.envHumidity}%`;
-                document.getElementById('regional-temp').innerHTML = 
-                    `Regional: ${data.temperature}°C<br>Humidity: ${data.humidity}%`;
-                document.getElementById('user-suggestion').innerText = data.suggestion;
-            } catch (err) {
-                document.getElementById('env-temp').innerText = 'Error loading data';
-                document.getElementById('regional-temp').innerText = '';
-                document.getElementById('user-suggestion').innerText = '';
-            }
+      async function fetchData() {
+        try {
+          const response = await fetch("/api/weather");
+          const data = await response.json();
+
+          document.getElementById(
+            "env-temp"
+          ).innerHTML = `${data.envTemp}°C<br>${data.envHumidity}%`;
+          document.getElementById(
+            "regional-temp"
+          ).innerHTML = `Temperature: ${data.regionalTemp}°C<br>Humidity: ${data.regionalHumidity}%`;
+          document.getElementById("user-suggestion").innerText =
+            data.suggestion;
+        } catch (err) {
+          document.getElementById("env-temp").innerText = "Error loading data";
+          document.getElementById("regional-temp").innerText = "";
+          document.getElementById("user-suggestion").innerText = "";
         }
+      }
+      fetchData();
 
-        // Save this: collect Pi data and insert to DB
-        async function saveThisData() {
-            const btn = document.getElementById('save-this');
-            const resultDiv = document.getElementById('action-result');
-            btn.disabled = true;
-            resultDiv.innerText = 'Saving data...';
-
-            try {
-                const res = await fetch('/api/collect', { method: 'POST' });
-                const json = await res.json();
-                if (res.ok) {
-                    resultDiv.innerText = `✅ Record saved`;
-                } else {
-                    resultDiv.innerText = `❌ Save failed: ${json.error || res.statusText}`;
-                }
-            } catch (err) {
-                resultDiv.innerText = `❌ Request error: ${err.message}`;
-            } finally {
-                btn.disabled = false;
-            }
-        }
-
-        // View history: open all saved records in new tab
-        async function viewHistory() {
-            const btn = document.getElementById('view-history');
-            btn.disabled = true;
-            try {
-                const res = await fetch('/api/metrics');
-                const docs = await res.json();
-                const w = window.open();
-                w.document.write('<pre>' + JSON.stringify(docs, null, 2) + '</pre>');
-            } catch (err) {
-                document.getElementById('action-result').innerText =
-                    `❌ Load history failed: ${err.message}`;
-            } finally {
-                btn.disabled = false;
-            }
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchData();
-            document.getElementById('save-this')
-                .addEventListener('click', saveThisData);
-            document.getElementById('view-history')
-                .addEventListener('click', viewHistory);
-        });
+      // navigate to /history when clicked
+      document
+        .getElementById("view-history")
+        .addEventListener("click", () => (location.href = "/history"));
     </script>
-</body>
+    <script>
+      // Fetch and display weather + humidity
+      async function fetchData() {
+        try {
+          const response = await fetch("/api/weather");
+          const data = await response.json();
+          document.getElementById(
+            "env-temp"
+          ).innerHTML = `Temperature: ${data.envTteemp}°C<br>Humidity: ${data.envHumidity}%`;
+          document.getElementById(
+            "regional-temp"
+          ).innerHTML = `Temperature: ${data.temperature}°C<br>Humidity: ${data.humidity}%`;
+          document.getElementById("user-suggestion").innerText =
+            data.suggestion;
+        } catch (err) {
+          document.getElementById("env-temp").innerText = "Error loading data";
+          document.getElementById("regional-temp").innerText = "";
+          document.getElementById("user-suggestion").innerText = "";
+        }
+      }
+
+      // Save this: collect Pi data and insert to DB
+      async function saveThisData() {
+        const btn = document.getElementById("save-this");
+        const resultDiv = document.getElementById("action-result");
+        btn.disabled = true;
+        resultDiv.innerText = "Saving data...";
+
+        try {
+          const res = await fetch("/api/collect", { method: "POST" });
+          const json = await res.json();
+          if (res.ok) {
+            resultDiv.innerText = `✅ Record saved`;
+          } else {
+            resultDiv.innerText = `❌ Save failed: ${
+              json.error || res.statusText
+            }`;
+          }
+        } catch (err) {
+          resultDiv.innerText = `❌ Request error: ${err.message}`;
+        } finally {
+          btn.disabled = false;
+        }
+      }
+
+      // View history: open all saved records in new tab
+      async function viewHistory() {
+        const btn = document.getElementById("view-history");
+        btn.disabled = true;
+        try {
+          const res = await fetch("/api/metrics");
+          const docs = await res.json();
+          const w = window.open();
+          w.document.write("<pre>" + JSON.stringify(docs, null, 2) + "</pre>");
+        } catch (err) {
+          document.getElementById(
+            "action-result"
+          ).innerText = `❌ Load history failed: ${err.message}`;
+        } finally {
+          btn.disabled = false;
+        }
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchData();
+        document
+          .getElementById("save-this")
+          .addEventListener("click", saveThisData);
+        document
+          .getElementById("view-history")
+          .addEventListener("click", viewHistory);
+      });
+    </script>
+  </body>
 </html>
