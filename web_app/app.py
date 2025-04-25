@@ -32,17 +32,22 @@ def create_app():
     # ----- DYNAMIC WEATHER ENDPOINT -----
     @app.route('/api/weather', methods=['GET'])
     def weather_api():
-        print("Calling get_current_weather_ny()...")  # Debug
+        # print("Calling get_current_weather_ny()...")  # Debug
 
-        temp, humidity = get_current_weather_ny()
-        print(f"Raw values: temp={temp}, humidity={humidity}")  # Debug
+        api_temp, api_humidity = get_current_weather_ny()
+        system_metrics = get_system_metrics()
+        env_temp = system_metrics.get('temperature')
+        env_humidity = system_metrics.get('humidity')
+        # print(f"Raw values: temp={temp}, humidity={humidity}")  # Debug
 
         return jsonify({
-            "success": True,
-            "temperature": temp,
-            "humidity":  humidity,
-            "timestamp": request.args.get('timestamp', None)
-        })
+        "success": True,
+        "api_temp": api_temp,
+        "api_humidity":  api_humidity,
+        "env_temp": env_temp,
+        "env_humidity": env_humidity,
+        "timestamp": request.args.get('timestamp', None)
+    })
 
     # ----- HISTORY PAGE & API -----
     @app.route('/history')

@@ -125,27 +125,6 @@
         <div id="action-result" style="margin-top: 1rem; text-align: center; font-weight: bold;"></div>
       </div>
     <script>
-      async function fetchData() {
-        try {
-          const response = await fetch("/api/weather");
-          const data = await response.json();
-
-          document.getElementById(
-            "env-temp"
-          ).innerHTML = `${data.envTemp}°C<br>${data.envHumidity}%`;
-          document.getElementById(
-            "regional-temp"
-          ).innerHTML = `Temperature: ${data.regionalTemp}°C<br>Humidity: ${data.regionalHumidity}%`;
-          document.getElementById("user-suggestion").innerText =
-            data.suggestion;
-        } catch (err) {
-          document.getElementById("env-temp").innerText = "Error loading data";
-          document.getElementById("regional-temp").innerText = "";
-          document.getElementById("user-suggestion").innerText = "";
-        }
-      }
-      fetchData();
-
       // navigate to /history when clicked
       document
         .getElementById("view-history")
@@ -159,10 +138,10 @@
           const data = await response.json();
           document.getElementById(
             "env-temp"
-          ).innerHTML = `Temperature: ${data.envTemp}°C<br>Humidity: ${data.envHumidity}%`;
+          ).innerHTML = `Temperature: ${data.env_temp}°C<br>Humidity: ${data.env_humidity}%`;
           document.getElementById(
             "regional-temp"
-          ).innerHTML = `Temperature: ${data.temperature}°C<br>Humidity: ${data.humidity}%`;
+          ).innerHTML = `Temperature: ${data.api_temp}°C<br>Humidity: ${data.api_humidity}%`;
           document.getElementById("user-suggestion").innerText =
             data.suggestion;
         } catch (err) {
