@@ -32,10 +32,10 @@ def create_app():
     # ----- DYNAMIC WEATHER ENDPOINT -----
     @app.route('/api/weather', methods=['GET'])
     def weather_api():
-        print("Calling get_current_weather_ny()...")  # Debug
+        # print("Calling get_current_weather_ny()...")  # Debug
 
         temp, humidity = get_current_weather_ny()
-        print(f"Raw values: temp={temp}, humidity={humidity}")  # Debug
+        # print(f"Raw values: temp={temp}, humidity={humidity}")  # Debug
 
         return jsonify({
             "success": True,

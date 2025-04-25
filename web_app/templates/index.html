@@ -125,27 +125,6 @@
         <div id="action-result" style="margin-top: 1rem; text-align: center; font-weight: bold;"></div>
       </div>
     <script>
-      async function fetchData() {
-        try {
-          const response = await fetch("/api/weather");
-          const data = await response.json();
-
-          document.getElementById(
-            "env-temp"
-          ).innerHTML = `${data.envTemp}°C<br>${data.envHumidity}%`;
-          document.getElementById(
-            "regional-temp"
-          ).innerHTML = `Temperature: ${data.regionalTemp}°C<br>Humidity: ${data.regionalHumidity}%`;
-          document.getElementById("user-suggestion").innerText =
-            data.suggestion;
-        } catch (err) {
-          document.getElementById("env-temp").innerText = "Error loading data";
-          document.getElementById("regional-temp").innerText = "";
-          document.getElementById("user-suggestion").innerText = "";
-        }
-      }
-      fetchData();
-
       // navigate to /history when clicked
       document
         .getElementById("view-history")
