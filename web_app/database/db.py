@@ -6,8 +6,11 @@ from dotenv import load_dotenv
 load_dotenv('x.env')
 
 ATLAS_URI = os.getenv('ATLAS_URI')
-DB_NAME = os.getenv('DB_NAME', 'home_monitor')
-COLLECTION_NAME = os.getenv('COLLECTION_NAME', 'sensor_readings')
+# DB_NAME = os.getenv('DB_NAME', 'home_monitor')
+# COLLECTION_NAME = os.getenv('COLLECTION_NAME', 'sensor_readings')
+
+DB_NAME = os.getenv('DB_NAME', 'app_testing')
+COLLECTION_NAME = os.getenv('COLLECTION_NAME', 'api_records')
 
 client = MongoClient(ATLAS_URI)
 db = client[DB_NAME]
