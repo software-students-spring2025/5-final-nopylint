@@ -196,6 +196,7 @@
       // Initialize on page load
       document.addEventListener("DOMContentLoaded", () => {
         fetchData();
+        setInterval(fetchData, 5000);
         document
           .getElementById("save-this")
           .addEventListener("click", saveThisData);
