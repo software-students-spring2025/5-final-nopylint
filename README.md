@@ -2,7 +2,7 @@
 
 An exercise to put to practice software development teamwork, subsystem communication, containers, deployment, and CI/CD pipelines. See [instructions](./instructions.md) for details.
 
-
+Team Members: [Nina Li](https://github.com/nina-jsl), [Jason Lin](https://github.com/JasonLIN0226), [Allen Ni](https://github.com/AllenNi66), [Sirui Wang](https://github.com/siruiii)
 
 
 ## Quick Start Guide
