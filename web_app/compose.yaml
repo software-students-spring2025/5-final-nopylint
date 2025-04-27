@@ -16,21 +16,9 @@ services:
       - "4000:4000"
     environment:
       POLL_INTERVAL: "5"
-      MONGO_URI: "mongodb://mongo:27017"
-    depends_on:
-      - mongo
+    env_file:
+      - database/x.env
 
-  mongo:
-    image: mongo:6.0
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-
-volumes:
-  mongo-data:
-    driver: local
       # The commented out section below is an example of how to define a PostgreSQL
       # database that your application can use. `depends_on` tells Docker Compose to
       # start the database before your application. The `db-data` volume persists the
