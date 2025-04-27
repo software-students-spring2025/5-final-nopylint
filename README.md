@@ -63,7 +63,7 @@ You’ll see:
 * **Environment** – live temperature / humidity from the Pi  
 * **Regional** – current NYC weather (via Open‑Meteo API)  
 * Values refresh every **5 s**.  
-* Click **Save This** to store a snapshot in MongoDB, or **View History** to browse all records.
+* Click **Save This** to store a snapshot in MongoDB, or **View History** to browse all records, or **Generate Suggestion** to get personalized clothing and weather tips based on current conditions.
 
 ---
 
