@@ -90,11 +90,13 @@
             envHumidityValues: eH,
             regionalHumidityValues: rH,
           } = await (await fetch("/api/history")).json();
-          labels = L;
-          envTemp = eT;
-          regTemp = rT;
-          envHum = eH;
-          regHum = rH;
+
+          // Reverse the data so it shows oldest → newest
+          labels = L.reverse();
+          envTemp = eT.reverse();
+          regTemp = rT.reverse();
+          envHum = eH.reverse();
+          regHum = rH.reverse();
           drawChart("temp");
         } catch (e) {
           console.error("Failed to load history:", e);
