@@ -69,10 +69,13 @@
 
       .suggestion {
         font-size: 12pt;
-        color: #ff6b6b;
-        text-align: center;
-        padding: 0.5rem;
+        color: #2c3e50; /* dark blue-gray, matches your site theme */
+        text-align: justify;
+        padding: 1rem;
         border-top: 1px solid rgba(255, 255, 255, 0.4);
+        white-space: pre-wrap; /* allow nice line breaks if needed */
+        word-break: break-word; /* break long words if necessary */
+        font-weight: 500; /* a little bolder but not too bold */
       }
 
       .actions {
@@ -128,6 +131,7 @@
         <button id="generate-suggestion">Generate Suggestion</button>
       </div>
       <div id="action-result"></div>
+      <div class="suggestion" id="user-suggestion"></div>
     </div>
 
     <script>
@@ -169,7 +173,7 @@
 
       // View history: open all saved records in new tab
       async function viewHistory() {
-        window.location.href = "/history"
+        window.location.href = "/history";
         // const btn = document.getElementById("view-history");
         // const resultDiv = document.getElementById("action-result");
         // btn.disabled = true;
@@ -193,8 +197,8 @@
         btn.disabled = true;
         resultDiv.innerText = "Generating suggestion…";
         try {
-          const res = await fetch("/weather.json");
-          const json = await res.json(); 
+          const res = await fetch("/api/suggestion");
+          const json = await res.json();
           document.getElementById("user-suggestion").innerText =
             json.suggestion;
           resultDiv.innerText = "";
