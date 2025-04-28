@@ -1,5 +1,6 @@
 import os
-from datetime import datetime
+from datetime import datetime, timezone
+
 from dotenv import load_dotenv
 
 load_dotenv('x.env')
@@ -21,7 +22,7 @@ collection = db[COLLECTION_NAME]
 def insert_metric(data: dict) -> str:
     doc = data.copy()
     if 'timestamp' not in doc:
-        doc['timestamp'] = datetime.utcnow()
+        doc['timestamp'] = datetime.now(timezone.utc)
     result = collection.insert_one(doc)
     return str(result.inserted_id)
 
