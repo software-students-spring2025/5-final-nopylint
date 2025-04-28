@@ -5,11 +5,14 @@ from web_app.database.db import insert_metric, get_latest, query_metrics
 def test_insert_and_get_latest(monkeypatch):
     now = datetime(2025, 1, 1, 12, 0, 0)
     import web_app.database.db as db_module
-    class DummyDT:
+    class DummyDateTime:
+        @staticmethod
+        def now(tz=None):
+            return now
         @staticmethod
         def utcnow():
             return now
-    monkeypatch.setattr(db_module, "datetime", DummyDT)
+    monkeypatch.setattr(db_module, "datetime", DummyDateTime)
 
     payload = {"device_id": "d1", "temperature": 22.5, "humidity": 55.5}
     new_id = insert_metric(payload)
@@ -24,15 +27,18 @@ def test_insert_and_get_latest(monkeypatch):
 def test_query_metrics_time_range(monkeypatch):
     import web_app.database.db as db_module
     base = datetime(2025, 1, 1, 0, 0, 0)
-    def make_dt(hour):
+    def make_datetime(hour):
         class DT:
+            @staticmethod
+            def now(tz=None):
+                return base.replace(hour=hour)
             @staticmethod
             def utcnow():
                 return base.replace(hour=hour)
         return DT
 
     for i in range(3):
-        monkeypatch.setattr(db_module, "datetime", make_dt(i))
+        monkeypatch.setattr(db_module, "datetime", make_datetime(i))
         insert_metric({"device_id": f"d{i}", "temperature": 20+i, "humidity": 50})
 
 
