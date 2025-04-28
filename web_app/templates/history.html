@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Smart Weather Dashboard — History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Google Fonts + Chart.js -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      /* same gradient background & centering */
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        font-family: "Inter", sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(270deg, #b5fffc, #ffdee9);
+        color: #2c3e50;
+      }
+
+      /* glassmorphic container */
+      .container {
+        width: 800px;
+        margin: 1.5rem auto;
+        padding: 1rem 2rem 3rem;
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .chart-controls {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+      .chart-controls button {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        margin: 0 0.5rem;
+        border: none;
+        border-radius: 5px;
+        background: #4dc7c3; /* lighter teal */
+        color: #ffffff;
+        cursor: pointer;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+      }
+
+      .chart-controls button:hover {
+        background: #66d4cf; /* slightly lighter teal on hover */
+      }
+
+      canvas {
+        width: 100% !important;
+        height: 400px !important;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="chart-controls">
+        <button id="btn-temp">Temperature</button>
+        <button id="btn-humid">Humidity</button>
+        <button id="btn-home">Home</button>
+      </div>
+      <canvas id="history-chart"></canvas>
+    </div>
+
+    <script>
+      let chart, labels, envTemp, regTemp, envHum, regHum;
+
+      async function fetchHistory() {
+        try {
+          const {
+            labels: L,
+            envTempValues: eT,
+            regionalTempValues: rT,
+            envHumidityValues: eH,
+            regionalHumidityValues: rH,
+          } = await (await fetch("/api/history")).json();
+
+          // Reverse the data so it shows oldest → newest
+          labels = L.reverse();
+          envTemp = eT.reverse();
+          regTemp = rT.reverse();
+          envHum = eH.reverse();
+          regHum = rH.reverse();
+          drawChart("temp");
+        } catch (e) {
+          console.error("Failed to load history:", e);
+        }
+      }
+
+      function drawChart(type) {
+        const ctx = document.getElementById("history-chart").getContext("2d");
+        const isTemp = type === "temp";
+        const unit = isTemp ? "°C" : "%";
+
+        const datasets = [
+          {
+            label: isTemp ? "Env Temp (°C)" : "Env Humidity (%)",
+            data: isTemp ? envTemp : envHum,
+            borderColor: "#4DC7C3",
+            pointBackgroundColor: "#4DC7C3",
+            pointRadius: 4,
+            fill: false,
+            tension: 0.1,
+          },
+          {
+            label: isTemp ? "Regional Temp (°C)" : "Regional Humidity (%)",
+            data: isTemp ? regTemp : regHum,
+            borderColor: "#FF6B6B",
+            pointBackgroundColor: "#FF6B6B",
+            pointRadius: 4,
+            fill: false,
+            tension: 0.1,
+          },
+        ];
+
+        const opts = {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              display: true,
+              title: { display: true, text: "Time" },
+              ticks: { maxRotation: 45, autoSkip: true },
+            },
+            y: {
+              display: true,
+              title: { display: true, text: unit },
+            },
+          },
+        };
+
+        if (chart) {
+          chart.data.datasets = datasets;
+          chart.options = opts;
+          chart.update();
+        } else {
+          chart = new Chart(ctx, {
+            type: "line",
+            data: { labels, datasets },
+            options: opts,
+          });
+        }
+      }
+
+      // unified button handling
+      const buttons = Array.from(
+        document.querySelectorAll(".chart-controls button")
+      );
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          // clear active from all
+          buttons.forEach((b) => b.classList.remove("active"));
+          // mark this one
+          btn.classList.add("active");
+
+          // perform action
+          if (btn.id === "btn-temp") {
+            drawChart("temp");
+          } else if (btn.id === "btn-humid") {
+            drawChart("humid");
+          } else if (btn.id === "btn-home") {
+            location.href = "/";
+          }
+        });
+
+        // hover effect (optional)
+        btn.addEventListener("mouseover", () => {
+          btn.style.background = "#66d4cf";
+        });
+        btn.addEventListener("mouseout", () => {
+          if (btn.classList.contains("active")) {
+            btn.style.background = "#3AAEA6";
+          } else {
+            btn.style.background = "#4DC7C3";
+          }
+        });
+      });
+
+      fetchHistory();
+    </script>
+  </body>
+</html>
