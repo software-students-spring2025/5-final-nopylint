@@ -1,0 +1,28 @@
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: web_app/Dockerfile
+      
+    container_name: web_app
+    ports:
+      - "4000:4000"
+    environment:
+      POLL_INTERVAL: "5"
+    env_file:
+      - x.env
+  sensor:
+    build:
+      context: .
+      dockerfile: raspberry_pi/Dockerfile
+
+
+    container_name: pi_sensor
+
+    # devices:
+    #   - "/dev/ttyUSB0:/dev/ttyUSB0"
+    env_file:
+      - x.env
+    restart: unless-stopped
+
