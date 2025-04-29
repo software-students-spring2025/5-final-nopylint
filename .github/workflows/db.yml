@@ -49,16 +49,21 @@ jobs:
             tags: ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-web-app:latest
 
   deploy:
-    name: 🚀 Deploy to DigitalOcean
+    name: 🚀 Deploy to DigitalOcean App Platform
     needs: build-and-push
     runs-on: ubuntu-latest
+
     steps:
-      - uses: appleboy/ssh-action@v0.1.5
+      # 1) Install the doctl CLI
+      - uses: digitalocean/action-doctl@v2
         with:
-          host: ${{ secrets.DO_HOST }}
-          username: ${{ secrets.DO_USER }}
-          key: ${{ secrets.DO_SSH_KEY }}
-          script: |
-            cd /home/${{ secrets.DO_USER }}/5-final-nopylint
-            docker pull ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-web-app:latest
-            docker-compose up -d server
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+
+      # 2) Trigger your App Platform app to redeploy
+      - name: Trigger App Platform deploy
+        run: |
+          # Replace APP_ID with the ID of your App (store it as a secret)
+          doctl apps deploy ${{ secrets.DO_APP_ID }}
+
+          # (If you’re using an app spec file, you can do:)
+          # doctl apps update ${{ secrets.DO_APP_ID }} --spec .do/app.yaml
