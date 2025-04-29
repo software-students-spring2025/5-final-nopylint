@@ -10,7 +10,7 @@ if USE_MOCK_DB:
 else:
     from pymongo import MongoClient
 
-MONGO_URI = os.getenv('MONGO_URI') or os.getenv('ATLAS_URI', 'mongodb://localhost:27017')
+MONGO_URI = os.getenv('MONGO_URI') or os.getenv('ATLAS_URI')
 
 DB_NAME = os.getenv('DB_NAME', 'app_testing')
 COLLECTION_NAME = os.getenv('COLLECTION_NAME', 'api_records')
