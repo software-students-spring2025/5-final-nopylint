@@ -1,4 +1,5 @@
 [![Sensor Image CI/CD](https://github.com/software-students-spring2025/5-final-nopylint/actions/workflows/sensor.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-nopylint/actions/workflows/sensor.yml)
+[![DB CI/CD](https://github.com/software-students-spring2025/5-final-nopylint/actions/workflows/db.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-nopylint/actions/workflows/db.yml)
 # Final Project
 
 An exercise to put to practice software development teamwork, subsystem communication, containers, deployment, and CI/CD pipelines. See [instructions](./instructions.md) for details.
