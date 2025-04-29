@@ -8,10 +8,10 @@ on:
 
 jobs:
   build-test-push:
-    name: Build, Test & Push API Image
+    name: Build, Test & Push DB Image
     runs-on: ubuntu-latest
     env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }} 
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -46,25 +46,19 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-server:latest
 
   deploy:
-    name: Deploy API to Droplet
+    name: Deploy DB to Droplet
     needs: build-test-push
     runs-on: ubuntu-latest
     steps:
-      - name: Write SSH key to disk
-        run: |
-          echo "${{ secrets.DROPLET_SSH_KEY }}" > deploy_key
-          chmod 600 deploy_key
+      - name: Start SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DROPLET_SSH_KEY }}
 
-      - name: Start SSH agent and add key
-        run: |
-          eval "$(ssh-agent -s)"
-          ssh-add deploy_key
-
-      - name: SSH & deploy API
+      - name: SSH & deploy DB
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }} << 'EOF'
             docker pull ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-server:latest
             docker rm -f web_app || true
             docker run -d --name web_app -p 80:4000 ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-server:latest
           EOF
-
