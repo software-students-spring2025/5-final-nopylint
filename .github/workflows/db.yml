@@ -54,7 +54,7 @@ jobs:
       - name: Write SSH key to file
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.DROPLET_SSH_KEY }}" | sed 's/\\n/\n/g' > ~/.ssh/id_rsa
+          printf "%b" "${{ secrets.DROPLET_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
       - name: Start SSH agent and add key
