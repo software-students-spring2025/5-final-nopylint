@@ -1,4 +1,4 @@
-name: MongoDB CI/CD
+name: Web App CI/CD
 
 on:
   push:
@@ -7,9 +7,35 @@ on:
     branches: [ main, master ]
 
 jobs:
-  build-and-push:
-    name: 📦 Build & Push MongoDB Image
+  # 1) Run your Python tests in web_app/
+  test:
+    name: 🧪 Test Web App
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r web_app/requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run tests
+        working-directory: web_app
+        run: pytest --cov=. 
+
+  # 2) Build & push Docker image if tests pass
+  build-and-push:
+    name: 📦 Build & Push Web App Image
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -24,10 +50,26 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build & Push MongoDB image
+      - name: Build & Push Image
         uses: docker/build-push-action@v4
         with:
-          context: ./mongodb
-          file: ./mongodb/Dockerfile
+          context: ./web_app
+          file: ./web_app/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-mongodb:latest
+          tags: ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-server:latest
+
+  # 3) Deploy to DigitalOcean App Platform
+  deploy:
+    name: 🚀 Deploy to App Platform
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+
+      - name: Trigger new deployment
+        run: |
+          doctl apps create-deployment ${{ secrets.DO_APP_ID }}

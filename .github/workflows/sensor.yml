@@ -24,7 +24,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build & Push sensor image
+      - name: Build & Push Image
         uses: docker/build-push-action@v4
         with:
           context: ./raspberry_pi
