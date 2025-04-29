@@ -39,7 +39,8 @@ jobs:
       - name: Build & push sensor image
         uses: docker/build-push-action@v4
         with:
-          context: ./raspberry_pi
+          context: .
+          file: raspberry_pi/Dockerfile
           push: true
           platforms: linux/amd64
           tags: ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-sensor:latest

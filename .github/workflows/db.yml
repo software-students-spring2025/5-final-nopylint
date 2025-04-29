@@ -36,10 +36,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Build & push API image
+      - name: Build & push DB image
         uses: docker/build-push-action@v4
         with:
-          context: ./web_app
+          context: .
+          file: web_app/Dockerfile
           push: true
           platforms: linux/amd64
           tags: ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-server:latest
