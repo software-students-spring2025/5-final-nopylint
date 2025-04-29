@@ -12,9 +12,9 @@ else:
 
 MONGO_URI = os.getenv('MONGO_URI') or os.getenv('ATLAS_URI')
 
-DB_NAME = os.getenv('DB_NAME')
-COLLECTION_NAME = os.getenv('COLLECTION_NAME')
-HISTORY=os.getenv('HISTORY')
+DB_NAME = os.getenv('DB_NAME', 'deployment' )
+COLLECTION_NAME = os.getenv('COLLECTION_NAME', 'sensor_readings')
+HISTORY=os.getenv('HISTORY', 'history')
 
 client = MongoClient(MONGO_URI)
 db = client[DB_NAME]
