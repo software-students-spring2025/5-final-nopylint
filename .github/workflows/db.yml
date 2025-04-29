@@ -1,4 +1,4 @@
-name: Web App CI/CD
+name: DB CI/CD
 
 on:
   push:
@@ -8,14 +8,12 @@ on:
 
 jobs:
   test:
-    name: 🧪 Test Web App
+    name: 🧪 Run Tests & Coverage
     runs-on: ubuntu-latest
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v3
@@ -28,7 +26,7 @@ jobs:
           pip install -r web_app/requirements.txt
           pip install pytest pytest-cov
 
-      - name: Run tests & collect coverage
+      - name: Run pytest
         run: |
           pytest --cov=web_app tests/
 
@@ -37,13 +35,10 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - uses: docker/setup-buildx-action@v2
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -65,13 +60,11 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-
     steps:
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
+      - uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_TOKEN }}
 
-      - name: Trigger new deployment
-        run: |
+      - run: |
           doctl apps create-deployment ${{ secrets.DO_APP_ID }}
+
