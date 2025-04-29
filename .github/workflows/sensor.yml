@@ -11,15 +11,19 @@ jobs:
     name: Build, Test & Push Sensor Image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+
       - name: Install dependencies & run pytest
         run: |
-          pip install -r raspberry_pi/requirements.txt
-          pytest raspberry_pi/ --cov=raspberry_pi --cov-fail-under=80
+          python -m pip install --upgrade pip
+          python -m pip install -r raspberry_pi/requirements.txt pytest
+          python -m pytest raspberry_pi/ --cov=raspberry_pi --cov-fail-under=80
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -53,8 +57,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }} << 'EOF'
             docker pull ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-sensor:latest
             docker rm -f pi_sensor || true
-            docker run -d \
-              --name pi_sensor \
-              ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-sensor:latest
+            docker run -d --name pi_sensor ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-sensor:latest
           EOF
+
 
