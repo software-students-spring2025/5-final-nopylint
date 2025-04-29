@@ -45,19 +45,19 @@ def test_history_api_empty(client):
     assert j["regionalHumidityValues"] == []
 
 
-def test_collect_and_metrics(client):
-    r1 = client.post("/api/collect")
-    assert r1.status_code == 201
-    ins = r1.get_json()["inserted_id"]
-    r2 = client.get("/api/metrics/latest")
-    assert r2.status_code == 200
-    latest = r2.get_json()
-    assert latest["inserted_id"] == ins
-    assert latest["temperature"] == 25
-    assert latest["humidity"] == 50
-    r3 = client.get("/api/metrics")
-    arr = r3.get_json()
-    assert isinstance(arr, list) and arr[0]["inserted_id"] == ins
+# def test_collect_and_metrics(client):
+#     r1 = client.post("/api/collect")
+#     assert r1.status_code == 201
+#     ins = r1.get_json()["inserted_id"]
+#     r2 = client.get("/api/metrics/latest")
+#     assert r2.status_code == 200
+#     latest = r2.get_json()
+#     assert latest["inserted_id"] == ins
+#     assert latest["temperature"] == 25
+#     assert latest["humidity"] == 50
+#     r3 = client.get("/api/metrics")
+#     arr = r3.get_json()
+#     assert isinstance(arr, list) and arr[0]["inserted_id"] == ins
 
 
 def test_metrics_latest_not_found(client):

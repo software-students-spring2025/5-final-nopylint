@@ -13,7 +13,7 @@ from flask import Flask, render_template, jsonify, request
 
 from web_app.api.weather import get_current_weather_ny
 
-from web_app.database.db import insert_metric, get_latest, query_metrics
+from web_app.database.db import insert_metric, get_latest, query_metrics, save,fetch_history
 from raspberry_pi.agent import get_system_metrics  
 
 from openai import OpenAI
@@ -54,7 +54,7 @@ def create_app():
 
     @app.route('/api/history', methods=['GET'])
     def history_api():
-        docs = query_metrics()
+        docs = fetch_history()
 
         labels = []
         envTempValues = []
@@ -67,9 +67,9 @@ def create_app():
             ts = d.get("timestamp", "unknown") 
             labels.append(ts)
             
-            env_temp = d.get("temperature", None)
-            env_hum  = d.get("humidity", None)
-            api_temp = d.get("api_temperature", None)
+            env_temp = d.get("env_temp", None)
+            env_hum  = d.get("env_humidity", None)
+            api_temp = d.get("api_temp", None)
             api_hum  = d.get("api_humidity", None)
 
 
@@ -91,34 +91,20 @@ def create_app():
     @app.route('/api/collect', methods=['POST'])
     def collect_api():
         system_metrics = get_system_metrics()
+        env_temp = system_metrics.get('temperature')
+        env_humidity = system_metrics.get('humidity')
         try:
-            temp, humidity = get_current_weather_ny()
+            api_temp, api_humidity = get_current_weather_ny()
             payload = {
-                **system_metrics,
-                'api_temperature': temp,
-                'api_humidity': humidity
+                "api_temp": api_temp,
+                "api_humidity":  api_humidity,
+                "env_temp": env_temp,
+                "env_humidity": env_humidity,
             }
-            new_id = insert_metric(payload)
+            new_id = save(payload)
             return jsonify({'inserted_id': new_id}), 201
         except Exception as e:
             return jsonify({'error': str(e)}), 500
-
-    @app.route('/api/metrics', methods=['GET'])
-    def metrics_api():
-        docs = query_metrics()
-        for d in docs:
-            d['inserted_id'] = str(d.pop('_id'))
-            d['timestamp'] = d.get('timestamp', 'unknown')
-        return jsonify(docs)
-
-    @app.route('/api/metrics/latest', methods=['GET'])
-    def latest_api():
-        d = get_latest()
-        if not d:
-            return jsonify({}), 404
-        d['inserted_id'] = str(d.pop('_id'))
-        d['timestamp'] = d.get('timestamp', 'unknown')
-        return jsonify(d)
     
     @app.route('/api/suggestion', methods=['GET'])
     def suggestion_api():

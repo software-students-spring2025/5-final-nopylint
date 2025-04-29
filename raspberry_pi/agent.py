@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.abspath(
 
 load_dotenv("x.env")
 USE_MOCK = True
-POLL_INTERVAL = int(os.getenv("POLL_INTERVAL"))
+POLL_INTERVAL = int(os.getenv("POLL_INTERVAL","5"))
 DEVICE_ID     = os.getenv("DEVICE_ID", str(uuid.uuid4()))
 
 from web_app.database.db import insert_metric
