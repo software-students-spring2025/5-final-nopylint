@@ -1,0 +1,4 @@
+[run]
+omit =
+    raspberry_pi/sample.py
+    raspberry_pi/sensor_serial.py
