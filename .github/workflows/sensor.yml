@@ -50,11 +50,12 @@ jobs:
     needs: build-test-push
     runs-on: ubuntu-latest
     steps:
-      - name: Start SSH agent
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: |
-            ${{ secrets.DROPLET_SSH_KEY }}
+      - name: Reconstruct SSH key and start agent
+        run: |
+          echo "${{ secrets.DROPLET_SSH_KEY }}" | sed 's/\\n/\n/g' > deploy_key
+          chmod 600 deploy_key
+          eval "$(ssh-agent -s)"
+          ssh-add deploy_key
 
       - name: SSH & deploy sensor
         run: |
@@ -63,3 +64,4 @@ jobs:
             docker rm -f pi_sensor || true
             docker run -d --name pi_sensor ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-sensor:latest
           EOF
+
