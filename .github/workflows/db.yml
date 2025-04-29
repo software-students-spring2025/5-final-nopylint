@@ -50,8 +50,12 @@ jobs:
     needs: build-test-push
     runs-on: ubuntu-latest
     steps:
-     - name: Write SSH key to file
+      - name: Check out (needed for composite actions or SSH setups)
+        uses: actions/checkout@v3
+
+      - name: Write SSH key to file
         run: |
+          mkdir -p ~/.ssh
           echo "${{ secrets.DROPLET_SSH_KEY }}" | sed 's/\\n/\n/g' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
@@ -62,7 +66,7 @@ jobs:
 
       - name: SSH & deploy DB
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }} << EOF
             docker pull ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-server:latest
             docker rm -f web_app || true
             docker run -d --name web_app -p 80:4000 ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-server:latest
