@@ -34,7 +34,13 @@ Live updates every 5 seconds for sensor data.
 [Web App + Database](https://hub.docker.com/r/ninajsl/5-final-nopylint-web-app)
 
 ## Quick Start Guide
-### 0. Environment Configuration
+
+### 1. Clone the project
+```
+git clone https://github.com/software-students-spring2025/5-final-nopylint.git
+```
+
+### 2. x.env Configuration
 
 This project uses an `x.env` file to manage environment variables securely.
 
@@ -46,7 +52,7 @@ This project uses an `x.env` file to manage environment variables securely.
 1. Open the `x.env` file located at the project root
 2. Add the OpenAI API key (shared in Discord Channel)
 
-### 1 · Set up environment
+### 3. Set up environment
 
 ```bash
 python3 -m venv .venv          
@@ -55,7 +61,7 @@ pip install -r web_app/requirements.txt
 ```
 
 
-### 2 · Run the sensor script on the Raspberry Pi
+### 4. Run the sensor script on the Raspberry Pi
 
 On the Pi (SSH or physical login):
 
@@ -63,7 +69,7 @@ On the Pi (SSH or physical login):
 python3 sensor_serial.py
 ```
 
-### 3 · Start the Flask dashboard on your Mac
+### 5. Start the Flask dashboard on your Mac
 
 Back on your host machine (still inside `.venv`):
 
@@ -84,7 +90,12 @@ You should see a stream of lines on your Raspberry Pi such as:
 T=24.7C H=61.3%
 ```
 
-### 4 · Open the dashboard
+### 6. Run with docker
+```
+docker compose up -d --build
+```
+
+### 7. Open the dashboard
 
 Visit the URL printed above—typically <http://localhost:4000>.
 
@@ -95,7 +106,10 @@ You’ll see:
 * Values refresh every **5 s**.  
 * Click **Save This** to store a snapshot in MongoDB, or **View History** to browse all records, or **Generate Suggestion** to get personalized clothing and weather tips based on current conditions.
 
-
+### 8. Stop and Clean Up Docker (Optional)
+```
+docker compose down
+```
 ## License
 
 MIT © 2025 nopylint
