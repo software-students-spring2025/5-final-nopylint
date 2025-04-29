@@ -6,23 +6,24 @@ An exercise to put to practice software development teamwork, subsystem communic
 
 ## ☁️ Smart Weather Dashboard
 ### Description
-This web-based dashboard displays live temperature and humidity readings from two sources:
+- This project is a web-based dashboard that collects, displays, and interprets real-time temperature and humidity data from a Raspberry Pi or simulated input. It demonstrates a lightweight, functional system for capturing and displaying environmental data in real time. It integrates hardware sensing via a Raspberry Pi, regional weather data through a public API, and AI-generated feedback. 
 
-Environment: Real-time data captured by a Raspberry Pi + SHTC3 Temperature & Humidity sensor.
+- This web-based dashboard displays live temperature and humidity readings from two sources:
 
-Regional (NYC): Current weather data fetched from the [Open-Meteo API](https://open-meteo.com/).
+   - Environment: Real-time data captured by a Raspberry Pi + SHTC3 Temperature & Humidity sensor.
+   - Regional (NYC): Current weather data fetched from the [Open-Meteo API](https://open-meteo.com/).
 
-This project streams real-time temperature and humidity data from a Raspberry Pi to a Flask-based dashboard running on your Mac or any host computer. It features a Flask backend, a modern HTML/CSS frontend, and uses Chart.js to visualize historical trends in weather data.
+- This project features a Flask backend, a HTML/CSS frontend, and uses Chart.js to visualize historical trends in weather data.
 
 ### Key features
 
 Live updates every 5 seconds for sensor data.
 
-**"Save This"**: Records the current data snapshot into a MongoDB database.
+- **Save This**: Records the current data snapshot into a MongoDB database.
 
-**"View History"**: Opens a visual history page showing trends in temperature and humidity over time, using interactive charts.
+- **View History**: Opens a visual history page showing trends in temperature and humidity over time, using interactive charts.
 
-**"Generate Suggestion"**: Leverages OpenAI to provide personalized clothing and weather tips based on both the environmental and regional conditions.
+- **Generate Suggestion**: Leverages OpenAI to provide personalized clothing and weather tips based on both the environmental and regional conditions.
 
 ### Team Members
 [Nina Li](https://github.com/nina-jsl), [Jason Lin](https://github.com/JasonLIN0226), [Allen Ni](https://github.com/AllenNi66), [Sirui Wang](https://github.com/siruiii)
@@ -37,12 +38,12 @@ Live updates every 5 seconds for sensor data.
 
 This project uses an `x.env` file to manage environment variables securely.
 
-- The `x.env` file is already set up with all required variables **except for your OpenAI API key**.
+- The `x.env` file is already set up with all required variables **except for OpenAI API key**.
 - If you have a raspberry pi for testing, you can set `USE_MOCK_SENSOR=false`
-- You must manually add the key to this file before running the app.
+- You must manually add the key to this file before running the app
 
 #### To do:
-1. Open the `x.env` file located at the project root.
+1. Open the `x.env` file located at the project root
 2. Add the OpenAI API key (shared in Discord Channel)
 
 ### 1 · Set up environment
