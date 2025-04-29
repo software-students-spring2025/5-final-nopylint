@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies & run pytest
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r raspberry_pi/requirements.txt pytest
+          python -m pip install -r raspberry_pi/requirements.txt pytest pytest-cov
           python -m pytest raspberry_pi/ --cov=raspberry_pi --cov-fail-under=80
 
       - name: Log in to Docker Hub
