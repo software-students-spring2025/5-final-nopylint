@@ -33,6 +33,9 @@ Live updates every 5 seconds for sensor data.
 
 [Web App + Database](https://hub.docker.com/r/ninajsl/5-final-nopylint-web-app)
 
+## Deployment (using mock sensor)
+[Digital Ocean link](https://nopylint-xq76d.ondigitalocean.app/)
+
 ## Quick Start Guide
 
 ### 1. Clone the project
