@@ -78,3 +78,4 @@ def test_weather_api(client):
     j = r.get_json()
     for k in ("api_humidity", "api_temp", "env_humidity", "env_temp"):
         assert k in j
+
