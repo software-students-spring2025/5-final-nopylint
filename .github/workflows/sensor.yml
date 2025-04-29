@@ -1,16 +1,14 @@
-name: Sensor CI/CD
-
 on:
   push:
     branches: [ main, master ]
-    paths:
-      - 'raspberry_pi/**'
-      - '.github/workflows/sensor-ci-cd.yml'
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
   build-and-push:
     name: 🔧 Build & Push Sensor Image
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -24,7 +22,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build & Push raspberry_pi Image
+      - name: Build & Push sensor image
         uses: docker/build-push-action@v4
         with:
           context: ./raspberry_pi
