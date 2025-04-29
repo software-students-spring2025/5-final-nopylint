@@ -10,7 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # copy all your sensor code into the image
 COPY raspberry_pi/ ./raspberry_pi/
-# COPY web_app/ ./web_app/
+COPY web_app/ ./web_app/
 # (Optional) expose serial device at runtime via --device 
 # e.g. docker run --device /dev/ttyUSB0 ...
 
