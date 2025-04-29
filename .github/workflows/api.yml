@@ -1,0 +1,68 @@
+name: API CI/CD
+
+# Trigger on any push or PR to main
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test-push:
+    name: Build, Test & Push API Image
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Check out the repo
+      - uses: actions/checkout@v3
+
+      # 2. Set up Python and run tests with coverage
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies & run pytest
+        run: |
+          pip install -r web_app/requirements.txt
+          pytest web_app/ --cov=web_app --cov-fail-under=80
+
+      # 3. Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 4. Ensure buildx is available
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # 5. Build & push multi-arch image
+      - name: Build & push API image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./web_app
+          push: true
+          platforms: linux/amd64
+          tags: ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-server:latest
+
+  deploy:
+    name: Deploy API to Droplet
+    needs: build-test-push
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Start SSH agent and load key
+      - name: Start SSH agent
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.DROPLET_SSH_KEY }}
+
+      # 2. SSH in and pull & restart container
+      - name: SSH & deploy API
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }} << 'EOF'
+            docker pull ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-server:latest
+            docker rm -f web_app || true
+            docker run -d \
+              --name web_app \
+              -p 80:4000 \
+              ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-server:latest
+          EOF
