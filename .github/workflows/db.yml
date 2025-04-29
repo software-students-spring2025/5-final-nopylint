@@ -7,7 +7,6 @@ on:
     branches: [ main, master ]
 
 jobs:
-  # 1) Run your Python tests in web_app/
   test:
     name: 🧪 Test Web App
     runs-on: ubuntu-latest
@@ -21,16 +20,17 @@ jobs:
           python-version: '3.9'
 
       - name: Install dependencies
+        # installs both your app deps and test tools
         run: |
           python -m pip install --upgrade pip
           pip install -r web_app/requirements.txt
           pip install pytest pytest-cov
 
-      - name: Run tests
-        working-directory: web_app
-        run: pytest --cov=. 
+      - name: Run tests & collect coverage
+        # run from repo root, point pytest at tests/ and web_app/
+        run: |
+          pytest --cov=web_app tests/
 
-  # 2) Build & push Docker image if tests pass
   build-and-push:
     name: 📦 Build & Push Web App Image
     needs: test
@@ -58,7 +58,6 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-server:latest
 
-  # 3) Deploy to DigitalOcean App Platform
   deploy:
     name: 🚀 Deploy to App Platform
     needs: build-and-push
