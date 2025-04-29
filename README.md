@@ -45,7 +45,7 @@ git clone https://github.com/software-students-spring2025/5-final-nopylint.git
 This project uses an `x.env` file to manage environment variables securely.
 
 - The `x.env` file is already set up with all required variables **except for OpenAI API key**.
-- If you have a raspberry pi for testing, you can set `USE_MOCK_SENSOR=false`
+- If you have a raspberry pi for testing, you can go to raspberry_pi/agent.py and set USE_MOCK to False.
 - You must manually add the key to this file before running the app
 
 #### To do:
