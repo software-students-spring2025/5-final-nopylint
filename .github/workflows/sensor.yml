@@ -11,7 +11,7 @@ jobs:
     name: Build, Test & Push Sensor Image
     runs-on: ubuntu-latest
     env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }} 
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -62,5 +62,3 @@ jobs:
             docker rm -f pi_sensor || true
             docker run -d --name pi_sensor ${{ secrets.DOCKERHUB_USER }}/5-final-nopylint-sensor:latest
           EOF
-
-
