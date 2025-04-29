@@ -51,7 +51,7 @@ def get_system_metrics():
     """
     data = read_sensor()
     payload = {
-        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime()),
         "device_id": DEVICE_ID,
         **data
     }
@@ -64,7 +64,7 @@ def main():
             print(f"成功收集数据，数据为：temp={data['temperature']:.2f}, humidity={data['humidity']:.2f}")
 
             payload = {
-                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime()),
                 "device_id": DEVICE_ID,
                 **data
             }

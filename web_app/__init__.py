@@ -1,10 +1,5 @@
-from flask import Flask
+# web_app/__init__.py
 
-def create_app():
-    app = Flask(__name__)
+from .app import create_app
 
-    # Register routes
-    from .app import register_routes
-    register_routes(app)
-
-    return app
+__all__ = ["create_app"]
